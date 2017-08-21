@@ -351,7 +351,9 @@ class JsonEditor:
         """
         :return: Removes all item from the tree.
         """
-        self.tree.delete([''])  # '' is the absolute root node
+        # self.tree.delete([''])  # '' is the absolute root node # This is buggy in the treeview
+        for child in self.tree.get_children():
+            self.remove_item(child)
 
     def load_json_from_file(self, filepath):
         """

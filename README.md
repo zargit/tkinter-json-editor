@@ -9,4 +9,4 @@ Tkinter based GUI component for viewing/editing of JSON files.
 5. Allow to perform a json API request and load the returned data in the view.
 6.
 
-![alt tag](json_editor.jpg)
+![alt tag](json_editor.png)

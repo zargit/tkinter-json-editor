@@ -21,7 +21,13 @@ Layout:
 
 """
 
+"""
+Original author and repo
+Abdullah Ahmad Zarir
+https://github.com/zargit/tkinter-json-editor
 
+
+"""
 class ValueTypes:
     DICT = 1
     LIST = 2
@@ -56,6 +62,9 @@ class JsonEditor:
 
             self.popup_menu_actions['add_child_filepath'] = {'text': 'Add Filepath',
                                                              'action': lambda: self.add_item_from_input(ValueTypes.FILEPATH)}
+            #add Duplicate here
+            self.popup_menu_actions['add_duplicate'] = {'text': 'Duplicate',
+                                                        'action': lambda: self.duplicate_item_from_input(self.get_selected_index())}
 
             self.popup_menu_actions['edit_child'] = {'text': 'Edit',
                                                      'action': lambda: self.edit_item_from_input()}
@@ -324,6 +333,30 @@ class JsonEditor:
             if self.verify_value(value):
                 self.edit_item(selection, value=value)
 
+    def duplicate_item_from_input(self, index):
+        """
+        :param index: Duplicate the item at index and its children from the list
+
+        """
+        #print("duplicate item from input")
+        json_root = self.get_json_root(index)
+        if index == json_root:
+        	for item in self.tree.get_children(index):
+        		key_item = self.get_key(item)
+        		value_item = self.get_value(item)
+        		self.add_item(item, key_item, value_item)
+        else:
+        	key_index = self.get_key(index)
+        	value_index = self.get_value(index)
+        	parent_index=self.tree.parent(index)
+        	self.add_item(key_index, value_index, parent_index)
+
+        
+        if self.tree.tag_has(Tags.FILE, json_root):
+            self.save_json_file(self.get_json_filepath(json_root), self.get_value(json_root))
+
+
+
     def remove_item(self, index):
         """
         :param index: Removes the item at index and its children from the list.
@@ -337,7 +370,7 @@ class JsonEditor:
         """
 
         json_root = self.get_json_root(index)
-
+        print(json_root)
         if index == json_root:
             for item in self.tree.get_children(index):
                 self.remove_item(item)
@@ -392,7 +425,7 @@ class JsonEditor:
         :param data: A <dict> object.
         """
         with open(filepath, 'w') as f:
-            json.dump(data, f)
+            json.dump(data, f, sort_keys=True, indent=4)
 
     def get_selected_index(self):
         """
